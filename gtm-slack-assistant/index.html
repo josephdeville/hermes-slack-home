@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hermes Cortex — GTM Slack Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:          #080C14;
+      --surface:     rgba(255,255,255,0.035);
+      --border:      rgba(255,255,255,0.07);
+      --border-hi:   rgba(255,255,255,0.12);
+      --white:       #FFFFFF;
+      --muted:       #7A8BAA;
+      --cyan:        #0FD9F3;
+      --cyan-dim:    rgba(15,217,243,0.15);
+      --purple:      #7C6FDE;
+      --purple-dim:  rgba(124,111,222,0.18);
+      --green:       #22C55E;
+      --sidebar-bg:  rgba(60,50,110,0.35);
+      --selected-ch: rgba(124,111,222,0.35);
+      --msg-bg:      rgba(255,255,255,0.03);
+      --input-bg:    rgba(255,255,255,0.06);
+      --pill-bg:     rgba(255,255,255,0.08);
+      --pill-border: rgba(255,255,255,0.12);
+    }
+
+    html, body {
+      width: 100%; min-height: 100vh;
+      background: var(--bg);
+      font-family: 'DM Sans', sans-serif;
+      color: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* ── Atmospheric glows ── */
+    .glow-canvas {
+      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      overflow: hidden;
+    }
+    .glow {
+      position: absolute; border-radius: 50%;
+      filter: blur(120px); opacity: 0.45;
+    }
+    .glow--purple {
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, #7C3FCF 0%, transparent 70%);
+      top: -160px; left: -80px;
+      animation: driftP 14s ease-in-out infinite alternate;
+    }
+    .glow--teal {
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, #0FD9F3 0%, transparent 70%);
+      top: 60px; right: -120px; opacity: 0.25;
+      animation: driftT 18s ease-in-out infinite alternate;
+    }
+    .glow--mid {
+      width: 400px; height: 300px;
+      background: radial-gradient(circle, #3B2E8C 0%, transparent 70%);
+      bottom: 80px; left: 30%;
+      animation: driftM 22s ease-in-out infinite alternate;
+    }
+
+    @keyframes driftP { from { transform: translate(0,0) scale(1); } to { transform: translate(40px, 60px) scale(1.08); } }
+    @keyframes driftT { from { transform: translate(0,0) scale(1); } to { transform: translate(-30px, 40px) scale(0.92); } }
+    @keyframes driftM { from { transform: translate(0,0); } to { transform: translate(20px, -30px); } }
+
+    /* ── Layout ── */
+    .page {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 48px 64px;
+      gap: 56px;
+      max-width: 1440px;
+      margin: 0 auto;
+    }
+
+    /* ── Left hero ── */
+    .hero {
+      flex: 1 1 0;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+      animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .hero__eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--cyan);
+      opacity: 0.85;
+    }
+    .hero__eyebrow::before {
+      content: '';
+      display: block;
+      width: 20px; height: 1.5px;
+      background: var(--cyan);
+      border-radius: 2px;
+    }
+
+    .hero__title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(46px, 5.5vw, 76px);
+      font-weight: 800;
+      line-height: 1.04;
+      letter-spacing: -0.02em;
+    }
+    .hero__title span {
+      display: block;
+      color: var(--cyan);
+      text-shadow: 0 0 60px rgba(15,217,243,0.4);
+    }
+
+    .hero__desc {
+      font-size: 17px;
+      font-weight: 300;
+      line-height: 1.65;
+      color: var(--muted);
+      max-width: 480px;
+    }
+    .hero__desc strong {
+      color: rgba(255,255,255,0.72);
+      font-weight: 500;
+    }
+
+    /* ── Feature pills ── */
+    .pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding-top: 4px;
+    }
+    .pill {
+      padding: 9px 20px;
+      border-radius: 100px;
+      background: var(--pill-bg);
+      border: 1px solid var(--pill-border);
+      font-size: 14px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.82);
+      cursor: default;
+      transition: background 0.2s, border-color 0.2s, transform 0.2s;
+      backdrop-filter: blur(8px);
+    }
+    .pill:hover {
+      background: rgba(255,255,255,0.12);
+      border-color: rgba(255,255,255,0.22);
+      transform: translateY(-1px);
+    }
+    .pill--cyan {
+      background: rgba(15,217,243,0.1);
+      border-color: rgba(15,217,243,0.3);
+      color: var(--cyan);
+    }
+    .pill--cyan:hover {
+      background: rgba(15,217,243,0.18);
+      border-color: rgba(15,217,243,0.5);
+    }
+
+    /* ── Bottom badge ── */
+    .badge {
+      margin-top: 8px;
+      display: inline-flex;
+      flex-direction: column;
+      gap: 5px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px 24px;
+      max-width: 380px;
+      backdrop-filter: blur(12px);
+    }
+    .badge__title {
+      font-size: 15px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.9);
+    }
+    .badge__sub {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--muted);
+    }
+    .badge__sub span { color: rgba(255,255,255,0.45); margin: 0 4px; }
+
+    /* ── Right: Slack mockup ── */
+    .slack-mockup {
+      flex: 0 0 auto;
+      width: min(580px, 46vw);
+      background: rgba(18, 22, 40, 0.55);
+      border: 1px solid var(--border-hi);
+      border-radius: 20px;
+      backdrop-filter: blur(24px) saturate(1.4);
+      box-shadow:
+        0 40px 120px rgba(0,0,0,0.6),
+        0 0 0 0.5px rgba(255,255,255,0.04) inset,
+        0 1px 0 rgba(255,255,255,0.06) inset;
+      overflow: hidden;
+      animation: fadeUp 0.8s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    /* Title bar */
+    .slack-titlebar {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 14px 16px;
+      background: rgba(255,255,255,0.02);
+      border-bottom: 1px solid var(--border);
+    }
+    .titlebar-dot {
+      width: 11px; height: 11px; border-radius: 50%;
+    }
+    .titlebar-dot:nth-child(1) { background: #FF5F57; }
+    .titlebar-dot:nth-child(2) { background: #FFBD2E; }
+    .titlebar-dot:nth-child(3) { background: #28C840; }
+
+    /* Slack inner layout */
+    .slack-body {
+      display: flex;
+      height: 420px;
+    }
+
+    /* Sidebar */
+    .slack-sidebar {
+      width: 190px;
+      flex-shrink: 0;
+      background: var(--sidebar-bg);
+      border-right: 1px solid rgba(255,255,255,0.06);
+      padding: 20px 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .sidebar-workspace {
+      padding: 0 16px 14px;
+      font-size: 14px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.9);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+    .sidebar-channel {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 16px;
+      font-size: 13.5px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.5);
+      cursor: default;
+      border-radius: 0;
+      transition: background 0.15s, color 0.15s;
+    }
+    .sidebar-channel:hover {
+      background: rgba(255,255,255,0.05);
+      color: rgba(255,255,255,0.75);
+    }
+    .sidebar-channel.active {
+      background: var(--selected-ch);
+      color: rgba(255,255,255,0.92);
+      font-weight: 500;
+    }
+    .ch-icon { font-size: 12px; opacity: 0.7; }
+
+    /* Main chat area */
+    .slack-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .chat-header {
+      padding: 16px 20px 14px;
+      border-bottom: 1px solid var(--border);
+      font-size: 15px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.92);
+      letter-spacing: -0.01em;
+    }
+    .chat-header span { color: var(--muted); font-weight: 400; }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 18px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .chat-messages::-webkit-scrollbar { width: 4px; }
+    .chat-messages::-webkit-scrollbar-track { background: transparent; }
+    .chat-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 4px; }
+
+    .message {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      animation: msgIn 0.4s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    .message:nth-child(1) { animation-delay: 0.6s; }
+    .message:nth-child(2) { animation-delay: 0.9s; }
+    .message:nth-child(3) { animation-delay: 1.2s; }
+
+    @keyframes msgIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .avatar {
+      width: 34px; height: 34px; border-radius: 8px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      color: white;
+    }
+    .avatar--joseph  { background: linear-gradient(135deg, #7C3FCF, #5C6ADE); }
+    .avatar--hermes1 { background: linear-gradient(135deg, #0BA5C4, #0FD9F3); }
+    .avatar--hermes2 { background: linear-gradient(135deg, #16A34A, #22C55E); }
+
+    .msg-body { flex: 1; min-width: 0; }
+    .msg-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 4px;
+    }
+    .msg-name .time {
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--muted);
+      margin-left: 8px;
+    }
+    .msg-text {
+      font-size: 13.5px;
+      font-weight: 400;
+      line-height: 1.55;
+      color: rgba(255,255,255,0.65);
+    }
+    .msg-highlight {
+      background: rgba(15,217,243,0.1);
+      border-left: 2px solid var(--cyan);
+      padding: 8px 12px;
+      border-radius: 0 8px 8px 0;
+      margin-top: 6px;
+      font-size: 12.5px;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.6;
+    }
+
+    /* Input */
+    .chat-input {
+      padding: 14px 16px;
+      border-top: 1px solid var(--border);
+    }
+    .chat-input input {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 16px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: var(--muted);
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .chat-input input:focus {
+      border-color: rgba(15,217,243,0.3);
+      background: rgba(255,255,255,0.07);
+      color: rgba(255,255,255,0.8);
+    }
+    .chat-input input::placeholder { color: rgba(122,139,170,0.7); }
+
+    /* ── Responsive ── */
+    @media (max-width: 1024px) {
+      .page { padding: 40px 40px; gap: 40px; }
+      .slack-mockup { width: min(500px, 50vw); }
+    }
+    @media (max-width: 768px) {
+      .page {
+        flex-direction: column;
+        align-items: stretch;
+        padding: 48px 24px 64px;
+      }
+      .slack-mockup { width: 100%; }
+      .hero__title { font-size: 48px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Atmospheric background -->
+  <div class="glow-canvas" aria-hidden="true">
+    <div class="glow glow--purple"></div>
+    <div class="glow glow--teal"></div>
+    <div class="glow glow--mid"></div>
+  </div>
+
+  <main class="page">
+
+    <!-- ── LEFT: Hero copy ── -->
+    <section class="hero">
+
+      <div class="hero__eyebrow">Revenue Intelligence</div>
+
+      <h1 class="hero__title">
+        Hermes Cortex
+        <span>GTM Slack Assistant</span>
+      </h1>
+
+      <p class="hero__desc">
+        A <strong>revenue co-pilot inside Slack</strong> that reads pipeline signals,
+        summarizes account context, and turns GTM chaos into
+        <strong>next-best actions</strong>.
+      </p>
+
+      <div class="pills">
+        <div class="pill pill--cyan">Pipeline briefs</div>
+        <div class="pill">Deal-risk alerts</div>
+        <div class="pill">Next-best actions</div>
+      </div>
+
+      <div class="badge">
+        <div class="badge__title">Built for GTM engineering</div>
+        <div class="badge__sub">
+          Slack-native
+          <span>•</span>
+          context-aware
+          <span>•</span>
+          action-oriented
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ── RIGHT: Slack UI mockup ── -->
+    <div class="slack-mockup" role="img" aria-label="Hermes Slack interface preview">
+
+      <!-- macOS traffic lights -->
+      <div class="slack-titlebar">
+        <div class="titlebar-dot"></div>
+        <div class="titlebar-dot"></div>
+        <div class="titlebar-dot"></div>
+      </div>
+
+      <div class="slack-body">
+
+        <!-- Sidebar -->
+        <nav class="slack-sidebar">
+          <div class="sidebar-workspace">Cortex GTM</div>
+          <div class="sidebar-channel">
+            <span class="ch-icon">#</span> pipeline-alerts
+          </div>
+          <div class="sidebar-channel">
+            <span class="ch-icon">#</span> deal-desk
+          </div>
+          <div class="sidebar-channel active">
+            <span class="ch-icon">#</span> gtm-assist
+          </div>
+          <div class="sidebar-channel">
+            <span class="ch-icon">♡</span> exec-asks
+          </div>
+        </nav>
+
+        <!-- Main chat -->
+        <div class="slack-main">
+
+          <div class="chat-header">
+            <span># </span>gtm-assist
+          </div>
+
+          <div class="chat-messages">
+
+            <!-- Joseph message -->
+            <div class="message">
+              <div class="avatar avatar--joseph">J</div>
+              <div class="msg-body">
+                <div class="msg-name">Joseph <span class="time">2:14 PM</span></div>
+                <div class="msg-text">Hermes, prep this account before the CSM sync.</div>
+              </div>
+            </div>
+
+            <!-- Hermes response 1 -->
+            <div class="message">
+              <div class="avatar avatar--hermes1">H</div>
+              <div class="msg-body">
+                <div class="msg-name">Hermes <span class="time">2:14 PM</span></div>
+                <div class="msg-text">Found 3 open opp risks, 2 exec mentions, and a fresh champion change. Drafting Slack brief + next actions.</div>
+                <div class="msg-highlight">
+                  Risk: VP of Eng left — new contact uncontacted. Champion moved to competitor account last week.
+                </div>
+              </div>
+            </div>
+
+            <!-- Hermes response 2 -->
+            <div class="message">
+              <div class="avatar avatar--hermes2">H</div>
+              <div class="msg-body">
+                <div class="msg-name">Hermes <span class="time">2:15 PM</span></div>
+                <div class="msg-text">Recommended: ask AE for close plan, send VP Eng proof point, update Mutual Action Plan.</div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="chat-input">
+            <input type="text" placeholder="Ask Hermes anything about pipeline or accounts…" />
+          </div>
+
+        </div><!-- /slack-main -->
+
+      </div><!-- /slack-body -->
+    </div><!-- /slack-mockup -->
+
+  </main>
+
+</body>
+</html>
