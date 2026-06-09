@@ -1,6 +1,40 @@
-# GTM Slack Assistant
+# Hermes Cortex — GTM Slack Assistant
 
-Daily role-aware Slack nudges for AE, CSM, BDR, and SE teams.
+Daily role-aware Slack nudges + an interactive App Home tab for AE, CSM, BDR, and SE teams.
+
+## App Home (Hermes Home Tab)
+
+The Home tab surfaces in your Hermes Slack app when any team member opens it. It shows a branded landing page with quick-action buttons (Pipeline brief, Deal risks, Next-best actions, Morning nudge, Exec asks).
+
+### Setup
+
+1. **Enable Home Tab** at `api.slack.com/apps` → App Home → Show Tabs → toggle *Home Tab* on.
+2. **Add bot scopes**: `im:write`, `users:read`, `users.profile:read`, `chat:write`.
+3. **Subscribe to event**: `app_home_opened` under Event Subscriptions → Bot Events.
+4. **Enable Socket Mode** and generate an App-Level Token with `connections:write` scope.
+5. **Set env vars**:
+   ```
+   SLACK_BOT_TOKEN=xoxb-...
+   SLACK_SIGNING_SECRET=...
+   SLACK_APP_TOKEN=xapp-...
+   ```
+6. **Install dependency**:
+   ```bash
+   bun add @slack/bolt
+   ```
+7. **Run**:
+   ```bash
+   bun run app-home.ts
+   ```
+
+### Files
+
+| File | Purpose |
+|---|---|
+| `home-blocks.ts` | Block Kit view definition — edit this to change the Home UI |
+| `app-home.ts` | Bolt app: listens for `app_home_opened`, handles button clicks |
+
+---
 
 ## Setup (5 steps)
 
