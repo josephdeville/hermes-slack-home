@@ -1,0 +1,265 @@
+{
+  "blocks": [
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "*Hermes Cortex*  ›  GTM Slack Assistant"
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "Hey Joseph :wave:  I'm your revenue co-pilot inside Slack.\nI read pipeline signals, summarize account context, and turn GTM chaos into *next-best actions*."
+      },
+      "accessory": {
+        "type": "image",
+        "image_url": "https://em-content.zobj.net/source/apple/391/robot_1f916.png",
+        "alt_text": "Hermes"
+      }
+    },
+    {
+      "type": "context",
+      "elements": [
+        {
+          "type": "mrkdwn",
+          "text": "Monday, June 9  ·  Slack-native  ·  context-aware  ·  action-oriented"
+        }
+      ]
+    },
+    { "type": "divider" },
+    {
+      "type": "section",
+      "text": { "type": "mrkdwn", "text": "*Pipeline at a glance*" }
+    },
+    {
+      "type": "carousel",
+      "elements": [
+        {
+          "type": "card",
+          "block_id": "deal-1",
+          "title": {
+            "type": "mrkdwn",
+            "text": "*Acme Corp*  —  $120,000",
+            "verbatim": false
+          },
+          "subtitle": {
+            "type": "mrkdwn",
+            "text": "Proposal  ·  Patrick T.",
+            "verbatim": false
+          },
+          "body": {
+            "type": "mrkdwn",
+            "text": "🔴 High risk  —  No activity in 18 days. Champion moved to new role.",
+            "verbatim": false
+          },
+          "actions": [
+            {
+              "type": "button",
+              "text": { "type": "plain_text", "text": "Details", "emoji": false },
+              "action_id": "hermes_deal_details_deal-1"
+            },
+            {
+              "type": "button",
+              "text": { "type": "plain_text", "text": "Prep brief", "emoji": false },
+              "style": "primary",
+              "action_id": "hermes_deal_brief_deal-1"
+            }
+          ]
+        },
+        {
+          "type": "card",
+          "block_id": "deal-2",
+          "title": {
+            "type": "mrkdwn",
+            "text": "*MongoDB*  —  $85,000",
+            "verbatim": false
+          },
+          "subtitle": {
+            "type": "mrkdwn",
+            "text": "Technical Eval  ·  Ben S.",
+            "verbatim": false
+          },
+          "body": {
+            "type": "mrkdwn",
+            "text": "🟡 Medium risk  —  Competitor mentioned in last call. SE follow-up pending.",
+            "verbatim": false
+          },
+          "actions": [
+            {
+              "type": "button",
+              "text": { "type": "plain_text", "text": "Details", "emoji": false },
+              "action_id": "hermes_deal_details_deal-2"
+            },
+            {
+              "type": "button",
+              "text": { "type": "plain_text", "text": "Prep brief", "emoji": false },
+              "style": "primary",
+              "action_id": "hermes_deal_brief_deal-2"
+            }
+          ]
+        },
+        {
+          "type": "card",
+          "block_id": "deal-3",
+          "title": {
+            "type": "mrkdwn",
+            "text": "*Stripe*  —  $210,000",
+            "verbatim": false
+          },
+          "subtitle": {
+            "type": "mrkdwn",
+            "text": "Negotiation  ·  Anthony H.",
+            "verbatim": false
+          },
+          "body": {
+            "type": "mrkdwn",
+            "text": "🟢 On Track  —  Legal review started. Close plan agreed. EOM target.",
+            "verbatim": false
+          },
+          "actions": [
+            {
+              "type": "button",
+              "text": { "type": "plain_text", "text": "Details", "emoji": false },
+              "action_id": "hermes_deal_details_deal-3"
+            },
+            {
+              "type": "button",
+              "text": { "type": "plain_text", "text": "Prep brief", "emoji": false },
+              "style": "primary",
+              "action_id": "hermes_deal_brief_deal-3"
+            }
+          ]
+        },
+        {
+          "type": "card",
+          "block_id": "deal-4",
+          "title": {
+            "type": "mrkdwn",
+            "text": "*Monzo*  —  $65,000",
+            "verbatim": false
+          },
+          "subtitle": {
+            "type": "mrkdwn",
+            "text": "Discovery  ·  Jeff S.",
+            "verbatim": false
+          },
+          "body": {
+            "type": "mrkdwn",
+            "text": "🟡 Medium risk  —  2nd exec sponsor identified. Demo scheduled for Thu.",
+            "verbatim": false
+          },
+          "actions": [
+            {
+              "type": "button",
+              "text": { "type": "plain_text", "text": "Details", "emoji": false },
+              "action_id": "hermes_deal_details_deal-4"
+            },
+            {
+              "type": "button",
+              "text": { "type": "plain_text", "text": "Prep brief", "emoji": false },
+              "style": "primary",
+              "action_id": "hermes_deal_brief_deal-4"
+            }
+          ]
+        },
+        {
+          "type": "card",
+          "block_id": "deal-5",
+          "title": {
+            "type": "mrkdwn",
+            "text": "*Procore*  —  $175,000",
+            "verbatim": false
+          },
+          "subtitle": {
+            "type": "mrkdwn",
+            "text": "Closed Won  ·  James K.",
+            "verbatim": false
+          },
+          "body": {
+            "type": "mrkdwn",
+            "text": "✅ Won  —  Signed last week. Handoff to CSM in progress.",
+            "verbatim": false
+          },
+          "actions": [
+            {
+              "type": "button",
+              "text": { "type": "plain_text", "text": "Details", "emoji": false },
+              "action_id": "hermes_deal_details_deal-5"
+            },
+            {
+              "type": "button",
+              "text": { "type": "plain_text", "text": "Prep brief", "emoji": false },
+              "style": "primary",
+              "action_id": "hermes_deal_brief_deal-5"
+            }
+          ]
+        }
+      ]
+    },
+    { "type": "divider" },
+    {
+      "type": "section",
+      "text": { "type": "mrkdwn", "text": "*Quick actions*" }
+    },
+    {
+      "type": "actions",
+      "elements": [
+        {
+          "type": "button",
+          "text": { "type": "plain_text", "text": ":bar_chart:  Pipeline brief", "emoji": true },
+          "style": "primary",
+          "action_id": "hermes_pipeline_brief"
+        },
+        {
+          "type": "button",
+          "text": { "type": "plain_text", "text": ":warning:  Deal risks", "emoji": true },
+          "action_id": "hermes_deal_risks"
+        },
+        {
+          "type": "button",
+          "text": { "type": "plain_text", "text": ":dart:  Next-best actions", "emoji": true },
+          "action_id": "hermes_next_actions"
+        }
+      ]
+    },
+    {
+      "type": "actions",
+      "elements": [
+        {
+          "type": "button",
+          "text": { "type": "plain_text", "text": ":sunrise:  Morning nudge", "emoji": true },
+          "action_id": "hermes_morning_nudge"
+        },
+        {
+          "type": "button",
+          "text": { "type": "plain_text", "text": ":love_letter:  Exec asks", "emoji": true },
+          "action_id": "hermes_exec_asks"
+        }
+      ]
+    },
+    { "type": "divider" },
+    {
+      "type": "section",
+      "text": { "type": "mrkdwn", "text": "*Active channels*" }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "`#pipeline-alerts`  — real-time deal-risk notifications\n`#deal-desk`  — AE escalations + legal/finance loops\n`#gtm-assist`  — ask Hermes anything, any time\n`#exec-asks`  — prepped account briefs for leadership"
+      }
+    },
+    { "type": "divider" },
+    {
+      "type": "context",
+      "elements": [
+        {
+          "type": "mrkdwn",
+          "text": ":robot_face:  *Hermes Cortex*  ·  Built for GTM engineering  ·  _Type in `#gtm-assist` to get started_"
+        }
+      ]
+    }
+  ]
+}

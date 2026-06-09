@@ -21,7 +21,109 @@ export const ACTION = {
   NEXT_ACTIONS:      "hermes_next_actions",
   MORNING_NUDGE:     "hermes_morning_nudge",
   EXEC_ASKS:         "hermes_exec_asks",
+  DEAL_DETAILS:      "hermes_deal_details",
+  DEAL_BRIEF:        "hermes_deal_brief",
 } as const;
+
+// ─── Deal card type ───────────────────────────────────────────────────────────
+export interface DealCard {
+  id: string;
+  account: string;
+  stage: string;
+  arr: string;
+  owner: string;
+  risk: string;
+  signal: string;
+  imageUrl?: string;
+}
+
+// ─── Default placeholder deals (replace with live CRM data) ──────────────────
+export const PLACEHOLDER_DEALS: DealCard[] = [
+  {
+    id: "deal-1",
+    account: "Acme Corp",
+    stage: "Proposal",
+    arr: "$120,000",
+    owner: "Patrick T.",
+    risk: "🔴 High",
+    signal: "No activity in 18 days. Champion moved to new role.",
+  },
+  {
+    id: "deal-2",
+    account: "MongoDB",
+    stage: "Technical Eval",
+    arr: "$85,000",
+    owner: "Ben S.",
+    risk: "🟡 Medium",
+    signal: "Competitor mentioned in last call. SE follow-up pending.",
+  },
+  {
+    id: "deal-3",
+    account: "Stripe",
+    stage: "Negotiation",
+    arr: "$210,000",
+    owner: "Anthony H.",
+    risk: "🟢 On Track",
+    signal: "Legal review started. Close plan agreed. EOM target.",
+  },
+  {
+    id: "deal-4",
+    account: "Monzo",
+    stage: "Discovery",
+    arr: "$65,000",
+    owner: "Jeff S.",
+    risk: "🟡 Medium",
+    signal: "2nd exec sponsor identified. Demo scheduled for Thu.",
+  },
+  {
+    id: "deal-5",
+    account: "Procore",
+    stage: "Closed Won",
+    arr: "$175,000",
+    owner: "James K.",
+    risk: "✅ Won",
+    signal: "Signed last week. Handoff to CSM in progress.",
+  },
+];
+
+// ─── Carousel block builder ───────────────────────────────────────────────────
+export function buildDealCarousel(deals: DealCard[]): object {
+  return {
+    type: "carousel",
+    elements: deals.map((deal) => ({
+      type: "card",
+      block_id: deal.id,
+      title: {
+        type: "mrkdwn",
+        text: `*${deal.account}*  —  ${deal.arr}`,
+        verbatim: false,
+      },
+      subtitle: {
+        type: "mrkdwn",
+        text: `${deal.stage}  ·  ${deal.owner}`,
+        verbatim: false,
+      },
+      body: {
+        type: "mrkdwn",
+        text: `${deal.risk}  ${deal.signal}`,
+        verbatim: false,
+      },
+      actions: [
+        {
+          type: "button",
+          text: { type: "plain_text", text: "Details", emoji: false },
+          action_id: `${ACTION.DEAL_DETAILS}_${deal.id}`,
+        },
+        {
+          type: "button",
+          text: { type: "plain_text", text: "Prep brief", emoji: false },
+          style: "primary",
+          action_id: `${ACTION.DEAL_BRIEF}_${deal.id}`,
+        },
+      ],
+    })),
+  };
+}
 
 // ─── View builder ─────────────────────────────────────────────────────────────
 
@@ -107,6 +209,15 @@ export function buildHomeView(ctx: HomeContext = {}): object {
           text: ":speech_balloon:  *Account context on demand*\nAsk me anything: \"Who owns renewal for Acme?\", \"What's blocking MongoDB?\", \"Prep me for Friday's EBR.\"",
         },
       },
+
+      { type: "divider" },
+
+      // ── Pipeline carousel ─────────────────────────────────────────────────
+      {
+        type: "section",
+        text: { type: "mrkdwn", text: "*Pipeline at a glance*" },
+      },
+      buildDealCarousel(PLACEHOLDER_DEALS),
 
       { type: "divider" },
 
