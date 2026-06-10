@@ -24,11 +24,48 @@
       "elements": [
         {
           "type": "mrkdwn",
-          "text": "Monday, June 9  ·  Slack-native  ·  context-aware  ·  action-oriented"
+          "text": "Tuesday, June 10  ·  Slack-native  ·  context-aware  ·  action-oriented"
         }
       ]
     },
+
     { "type": "divider" },
+
+    {
+      "type": "section",
+      "text": { "type": "mrkdwn", "text": "*What I can do*" }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": ":bar_chart:  *Pipeline briefs*\nGet an instant snapshot of your pipeline health — deal momentum, stage distribution, and forecast risk."
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": ":warning:  *Deal-risk alerts*\nI watch for stalled deals, champion changes, exec mentions, and competitor activity so you catch risks early."
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": ":dart:  *Next-best actions*\nRole-aware recommendations for every open deal — what to send, who to engage, and what to unblock."
+      }
+    },
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": ":speech_balloon:  *Account context on demand*\nAsk me anything: \"Who owns renewal for Acme?\", \"What's blocking MongoDB?\", \"Prep me for Friday's EBR.\""
+      }
+    },
+
+    { "type": "divider" },
+
     {
       "type": "section",
       "text": { "type": "mrkdwn", "text": "*Pipeline at a glance*" }
@@ -51,7 +88,7 @@
           },
           "body": {
             "type": "mrkdwn",
-            "text": "🔴 High risk  —  No activity in 18 days. Champion moved to new role.",
+            "text": "🔴 High  No activity in 18 days. Champion moved to new role.",
             "verbatim": false
           },
           "actions": [
@@ -83,7 +120,7 @@
           },
           "body": {
             "type": "mrkdwn",
-            "text": "🟡 Medium risk  —  Competitor mentioned in last call. SE follow-up pending.",
+            "text": "🟡 Medium  Competitor mentioned in last call. SE follow-up pending.",
             "verbatim": false
           },
           "actions": [
@@ -115,7 +152,7 @@
           },
           "body": {
             "type": "mrkdwn",
-            "text": "🟢 On Track  —  Legal review started. Close plan agreed. EOM target.",
+            "text": "🟢 On Track  Legal review started. Close plan agreed. EOM target.",
             "verbatim": false
           },
           "actions": [
@@ -147,7 +184,7 @@
           },
           "body": {
             "type": "mrkdwn",
-            "text": "🟡 Medium risk  —  2nd exec sponsor identified. Demo scheduled for Thu.",
+            "text": "🟡 Medium  2nd exec sponsor identified. Demo scheduled for Thu.",
             "verbatim": false
           },
           "actions": [
@@ -179,7 +216,7 @@
           },
           "body": {
             "type": "mrkdwn",
-            "text": "✅ Won  —  Signed last week. Handoff to CSM in progress.",
+            "text": "✅ Won  Signed last week. Handoff to CSM in progress.",
             "verbatim": false
           },
           "actions": [
@@ -198,7 +235,9 @@
         }
       ]
     },
+
     { "type": "divider" },
+
     {
       "type": "section",
       "text": { "type": "mrkdwn", "text": "*Quick actions*" }
@@ -209,17 +248,20 @@
         {
           "type": "button",
           "text": { "type": "plain_text", "text": ":bar_chart:  Pipeline brief", "emoji": true },
-          "style": "primary",
-          "action_id": "hermes_pipeline_brief"
+          "value": "hermes_pipeline_brief",
+          "action_id": "hermes_pipeline_brief",
+          "style": "primary"
         },
         {
           "type": "button",
           "text": { "type": "plain_text", "text": ":warning:  Deal risks", "emoji": true },
+          "value": "hermes_deal_risks",
           "action_id": "hermes_deal_risks"
         },
         {
           "type": "button",
           "text": { "type": "plain_text", "text": ":dart:  Next-best actions", "emoji": true },
+          "value": "hermes_next_actions",
           "action_id": "hermes_next_actions"
         }
       ]
@@ -230,16 +272,20 @@
         {
           "type": "button",
           "text": { "type": "plain_text", "text": ":sunrise:  Morning nudge", "emoji": true },
+          "value": "hermes_morning_nudge",
           "action_id": "hermes_morning_nudge"
         },
         {
           "type": "button",
           "text": { "type": "plain_text", "text": ":love_letter:  Exec asks", "emoji": true },
+          "value": "hermes_exec_asks",
           "action_id": "hermes_exec_asks"
         }
       ]
     },
+
     { "type": "divider" },
+
     {
       "type": "section",
       "text": { "type": "mrkdwn", "text": "*Active channels*" }
@@ -251,7 +297,9 @@
         "text": "`#pipeline-alerts`  — real-time deal-risk notifications\n`#deal-desk`  — AE escalations + legal/finance loops\n`#gtm-assist`  — ask Hermes anything, any time\n`#exec-asks`  — prepped account briefs for leadership"
       }
     },
+
     { "type": "divider" },
+
     {
       "type": "context",
       "elements": [
