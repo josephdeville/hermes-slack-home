@@ -160,7 +160,7 @@ export function buildHomeView(ctx: HomeContext = {}): object {
         },
         accessory: {
           type: "image",
-          image_url: "https://em-content.zobj.net/source/apple/391/robot_1f916.png",
+          image_url: "https://raw.githubusercontent.com/twitter/twemoji/master/assets/72x72/1f916.png",
           alt_text: "Hermes",
         },
       },
