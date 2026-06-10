@@ -1,0 +1,132 @@
+{
+  "type": "modal",
+  "callback_id": "gtm_eng_request_submit",
+  "title": { "type": "plain_text", "text": "GTM Engineering Request", "emoji": true },
+  "submit": { "type": "plain_text", "text": "Submit request", "emoji": true },
+  "close":  { "type": "plain_text", "text": "Cancel", "emoji": true },
+  "blocks": [
+    {
+      "type": "section",
+      "text": {
+        "type": "mrkdwn",
+        "text": "Use this form to request new integrations, automations, bug fixes, or data work from the GTM engineering team. Hermes will route it to the right person."
+      }
+    },
+    { "type": "divider" },
+    {
+      "type": "input",
+      "block_id": "gtm_req_type",
+      "label": { "type": "plain_text", "text": "Request type", "emoji": true },
+      "element": {
+        "type": "static_select",
+        "action_id": "value",
+        "placeholder": { "type": "plain_text", "text": "Select a type", "emoji": true },
+        "options": [
+          { "text": { "type": "plain_text", "text": ":electric_plug:  New integration",    "emoji": true }, "value": "integration" },
+          { "text": { "type": "plain_text", "text": ":robot_face:  Automation / workflow",  "emoji": true }, "value": "automation" },
+          { "text": { "type": "plain_text", "text": ":bar_chart:  Reporting / dashboard",   "emoji": true }, "value": "reporting" },
+          { "text": { "type": "plain_text", "text": ":bug:  Bug fix",                       "emoji": true }, "value": "bug" },
+          { "text": { "type": "plain_text", "text": ":floppy_disk:  Data / enrichment",     "emoji": true }, "value": "data" },
+          { "text": { "type": "plain_text", "text": ":hammer_and_wrench:  Tooling / infra", "emoji": true }, "value": "tooling" },
+          { "text": { "type": "plain_text", "text": ":memo:  Other",                        "emoji": true }, "value": "other" }
+        ]
+      }
+    },
+    {
+      "type": "input",
+      "block_id": "gtm_priority",
+      "label": { "type": "plain_text", "text": "Priority", "emoji": true },
+      "element": {
+        "type": "radio_buttons",
+        "action_id": "value",
+        "options": [
+          { "text": { "type": "mrkdwn", "text": "*P1 — Urgent*  _(blocking revenue or active deals)_" },         "value": "p1" },
+          { "text": { "type": "mrkdwn", "text": "*P2 — High*  _(significant friction, needed this sprint)_" },   "value": "p2" },
+          { "text": { "type": "mrkdwn", "text": "*P3 — Normal*  _(improvement, no hard deadline)_" },            "value": "p3" },
+          { "text": { "type": "mrkdwn", "text": "*P4 — Low*  _(nice-to-have, backlog candidate)_" },             "value": "p4" }
+        ]
+      }
+    },
+    {
+      "type": "input",
+      "block_id": "gtm_title",
+      "label": { "type": "plain_text", "text": "Request title", "emoji": true },
+      "element": {
+        "type": "plain_text_input",
+        "action_id": "value",
+        "placeholder": { "type": "plain_text", "text": "e.g. Sync Gong call tags to Salesforce opportunities" },
+        "max_length": 120
+      }
+    },
+    {
+      "type": "input",
+      "block_id": "gtm_description",
+      "label": { "type": "plain_text", "text": "Description", "emoji": true },
+      "hint": {
+        "type": "plain_text",
+        "text": "What problem are you solving? What does success look like? Include any relevant deal names, accounts, or team members."
+      },
+      "element": {
+        "type": "plain_text_input",
+        "action_id": "value",
+        "multiline": true,
+        "placeholder": { "type": "plain_text", "text": "Describe the request in as much detail as possible..." },
+        "max_length": 2000
+      }
+    },
+    {
+      "type": "input",
+      "block_id": "gtm_affected_teams",
+      "label": { "type": "plain_text", "text": "Affected teams", "emoji": true },
+      "hint": { "type": "plain_text", "text": "Select all that apply." },
+      "element": {
+        "type": "checkboxes",
+        "action_id": "value",
+        "options": [
+          { "text": { "type": "plain_text", "text": "AE — Account Executives",   "emoji": false }, "value": "AE" },
+          { "text": { "type": "plain_text", "text": "CSM — Customer Success",     "emoji": false }, "value": "CSM" },
+          { "text": { "type": "plain_text", "text": "BDR — Business Development", "emoji": false }, "value": "BDR" },
+          { "text": { "type": "plain_text", "text": "SE — Sales Engineering",     "emoji": false }, "value": "SE" },
+          { "text": { "type": "plain_text", "text": "Leadership / RevOps",        "emoji": false }, "value": "Leadership" },
+          { "text": { "type": "plain_text", "text": "All GTM",                    "emoji": false }, "value": "All" }
+        ]
+      }
+    },
+    {
+      "type": "input",
+      "block_id": "gtm_tool_system",
+      "label": { "type": "plain_text", "text": "Tool or system involved", "emoji": true },
+      "hint": { "type": "plain_text", "text": "e.g. Salesforce, Gong, HubSpot, Slack, Clay, Composio, Hermes" },
+      "optional": true,
+      "element": {
+        "type": "plain_text_input",
+        "action_id": "value",
+        "placeholder": { "type": "plain_text", "text": "Salesforce + Gong" },
+        "max_length": 200
+      }
+    },
+    {
+      "type": "input",
+      "block_id": "gtm_timeline",
+      "label": { "type": "plain_text", "text": "Ideal timeline", "emoji": true },
+      "optional": true,
+      "element": {
+        "type": "datepicker",
+        "action_id": "value",
+        "placeholder": { "type": "plain_text", "text": "Pick a target date" }
+      }
+    },
+    {
+      "type": "input",
+      "block_id": "gtm_link",
+      "label": { "type": "plain_text", "text": "Supporting link", "emoji": true },
+      "hint": { "type": "plain_text", "text": "Loom, Notion doc, Salesforce report, screenshot, etc." },
+      "optional": true,
+      "element": {
+        "type": "url_text_input",
+        "action_id": "value",
+        "placeholder": { "type": "plain_text", "text": "https://..." }
+      }
+    }
+  ]
+}

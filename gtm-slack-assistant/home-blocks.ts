@@ -23,6 +23,7 @@ export const ACTION = {
   EXEC_ASKS:         "hermes_exec_asks",
   DEAL_DETAILS:      "hermes_deal_details",
   DEAL_BRIEF:        "hermes_deal_brief",
+  SUBMIT_REQUEST:    "hermes_submit_request",
 } as const;
 
 // ─── Deal card type ───────────────────────────────────────────────────────────
@@ -285,6 +286,23 @@ export function buildHomeView(ctx: HomeContext = {}): object {
             "`#gtm-assist`  — ask Hermes anything, any time",
             "`#exec-asks`  — prepped account briefs for leadership",
           ].join("\n"),
+        },
+      },
+
+      { type: "divider" },
+
+      // ── GTM engineering request ───────────────────────────────────────────
+      {
+        type: "section",
+        text: {
+          type: "mrkdwn",
+          text: "*Need something built?*\nSubmit a GTM engineering request — new integrations, automations, bug fixes, data work, or tooling improvements.",
+        },
+        accessory: {
+          type: "button",
+          text: { type: "plain_text", text: ":hammer_and_wrench:  Submit request", emoji: true },
+          style: "primary",
+          action_id: ACTION.SUBMIT_REQUEST,
         },
       },
 

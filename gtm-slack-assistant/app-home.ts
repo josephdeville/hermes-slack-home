@@ -17,6 +17,7 @@
 
 import { App, LogLevel } from "@slack/bolt";
 import { buildHomeView, ACTION } from "./home-blocks.ts";
+import { buildRequestForm, buildConfirmationBlocks, FORM_CALLBACK, FORM_BLOCK } from "./form-blocks.ts";
 import { TEAM } from "./gtm-assistant.ts";
 
 // ─── Init ─────────────────────────────────────────────────────────────────────
@@ -99,6 +100,97 @@ app.action(ACTION.EXEC_ASKS, async ({ body, ack, say }) => {
   await say({
     text: ":love_letter: Check <#gtm-assist> and ping me with the account name you want prepped.",
     channel: body.user.id,
+  });
+});
+
+// ─── GTM engineering request form ────────────────────────────────────────────
+
+app.action(ACTION.SUBMIT_REQUEST, async ({ body, ack, client }) => {
+  await ack();
+  await client.views.open({
+    trigger_id: (body as any).trigger_id,
+    view: buildRequestForm() as any,
+  });
+});
+
+app.view(FORM_CALLBACK, async ({ ack, view, body, client }) => {
+  await ack();
+
+  const vals = view.state.values;
+  const submitterId = body.user.id;
+  const submitterName = body.user.name ?? "there";
+
+  const title       = vals[FORM_BLOCK.TITLE]?.value?.value ?? "(no title)";
+  const requestType = vals[FORM_BLOCK.REQUEST_TYPE]?.value?.selected_option?.value ?? "other";
+  const priority    = vals[FORM_BLOCK.PRIORITY]?.value?.selected_option?.value ?? "p3";
+  const description = vals[FORM_BLOCK.DESCRIPTION]?.value?.value ?? "";
+  const teams       = (vals[FORM_BLOCK.AFFECTED_TEAMS]?.value?.selected_options ?? [])
+                        .map((o: any) => o.value).join(", ");
+  const tool        = vals[FORM_BLOCK.TOOL_SYSTEM]?.value?.value ?? "";
+  const timeline    = vals[FORM_BLOCK.TIMELINE]?.value?.selected_date ?? "";
+  const link        = vals[FORM_BLOCK.LINK]?.value?.value ?? "";
+
+  // DM confirmation to submitter
+  const dm = await client.conversations.open({ users: submitterId });
+  await client.chat.postMessage({
+    channel: (dm.channel as any).id,
+    blocks: buildConfirmationBlocks(submitterName, title, requestType, priority) as any,
+    text: `GTM engineering request received: ${title}`,
+  });
+
+  // Post full request to #gtm-assist for triage
+  // Replace GTMASSIST_CHANNEL_ID with your actual channel ID
+  const GTM_ASSIST_CHANNEL = Bun.env.GTM_ASSIST_CHANNEL_ID ?? "C_GTM_ASSIST";
+  await client.chat.postMessage({
+    channel: GTM_ASSIST_CHANNEL,
+    text: `New GTM engineering request: ${title}`,
+    blocks: [
+      {
+        type: "header",
+        text: { type: "plain_text", text: ":hammer_and_wrench:  New GTM Engineering Request", emoji: true },
+      },
+      {
+        type: "section",
+        fields: [
+          { type: "mrkdwn", text: `*Title*\n${title}` },
+          { type: "mrkdwn", text: `*From*\n<@${submitterId}>` },
+          { type: "mrkdwn", text: `*Type*\n${requestType}` },
+          { type: "mrkdwn", text: `*Priority*\n${priority.toUpperCase()}` },
+          { type: "mrkdwn", text: `*Teams*\n${teams || "—"}` },
+          { type: "mrkdwn", text: `*Tool / System*\n${tool || "—"}` },
+        ],
+      },
+      ...(description ? [{
+        type: "section",
+        text: { type: "mrkdwn", text: `*Description*\n${description}` },
+      }] : []),
+      ...(timeline || link ? [{
+        type: "context",
+        elements: [
+          ...(timeline ? [{ type: "mrkdwn", text: `:calendar:  Target: ${timeline}` }] : []),
+          ...(link     ? [{ type: "mrkdwn", text: `:link:  <${link}|Supporting link>` }] : []),
+        ],
+      }] : []),
+      { type: "divider" },
+      {
+        type: "actions",
+        elements: [
+          {
+            type: "button",
+            text: { type: "plain_text", text: ":white_check_mark:  Claim", emoji: true },
+            style: "primary",
+            action_id: "gtm_req_claim",
+            value: submitterId,
+          },
+          {
+            type: "button",
+            text: { type: "plain_text", text: ":x:  Decline", emoji: true },
+            action_id: "gtm_req_decline",
+            value: submitterId,
+          },
+        ],
+      },
+    ],
   });
 });
 
